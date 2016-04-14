@@ -6,7 +6,7 @@ class AutocompleteInput < React::Component::Base
   param :change_attr
   param :ref_
   param :name
-  param :set_validation
+  #param :set_validation
 
   before_mount do
     state.options! []
@@ -25,18 +25,18 @@ class AutocompleteInput < React::Component::Base
     div do
       input(type: :text, value: params.value).on(:change) do |event|
         params.change_attr.call event.target.value
-        if state.options.include? event.target.value
-          params.set_validation.call true
-        else
-          params.set_validation.call false
-        end
+        #if state.options.include? event.target.value
+        #  params.set_validation.call true
+        #else
+        #  params.set_validation.call false
+        #end
         $controller.rpc('get_' + params.ref_, event.target.value).then do |result|
           state.options! result.map {|x| x[params.name]}
         end
       end.on(:keyDown) do |event|
         if event.key_code == 13
           params.change_attr.call state.options[state.index]
-          params.set_validation.call true
+          #params.set_validation.call true
           state.options! []
         elsif event.key_code == 40
           state.index! (state.index + 1) % state.options.length if state.options.length != 0
@@ -48,7 +48,7 @@ class AutocompleteInput < React::Component::Base
         state.options.each_with_index do |v, i|
           div(class: selected(i)){v}.on(:click) do |e|
             params.change_attr.call v
-            params.set_validation.call true
+            #params.set_validation.call true
             state.options! []
           end
         end
