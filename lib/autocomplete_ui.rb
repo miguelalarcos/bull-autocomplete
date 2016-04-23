@@ -38,12 +38,10 @@ class AutocompleteInput < React::Component::Base
         end
       end
       div(class: 'autocomplete-popover') do
-        state.options.each_with_index do |v, index|
-          #m = v.match(/(.*)(#{params.value})(.*)/i)
+        state.options.each_with_index do |v, i|
           r = Regexp.new("(.*)(#{params.value})(.*)", true)
           m = v.match(r)
-          div(class: selected(index)) do
-            #v
+          div(class: selected(i)) do
             span{m[1]}
             b{m[2]}
             span{m[3]}
