@@ -3,10 +3,9 @@ require 'reactive-ruby'
 class AutocompleteInput < React::Component::Base
 
   param :value
-  param :change_attr
+  param :on_change
   param :ref_
   param :name
-  #param :set_validation
 
   before_mount do
     state.options! []
@@ -22,21 +21,15 @@ class AutocompleteInput < React::Component::Base
   end
 
   def render
-    div do
+    span(class: 'autocomplete-box') do
       input(type: :text, value: params.value).on(:change) do |event|
-        params.change_attr.call event.target.value
-        #if state.options.include? event.target.value
-        #  params.set_validation.call true
-        #else
-        #  params.set_validation.call false
-        #end
+        params.on_change.call event.target.value
         $controller.rpc('get_' + params.ref_, event.target.value).then do |result|
           state.options! result.map {|x| x[params.name]}
         end
       end.on(:keyDown) do |event|
         if event.key_code == 13
-          params.change_attr.call state.options[state.index]
-          #params.set_validation.call true
+          params.on_change.call state.options[state.index]
           state.options! []
         elsif event.key_code == 40
           state.index! (state.index + 1) % state.options.length if state.options.length != 0
@@ -46,11 +39,15 @@ class AutocompleteInput < React::Component::Base
       end
       div(class: 'autocomplete-popover') do
         state.options.each_with_index do |v, i|
-          div(class: selected(i)){v}.on(:click) do |e|
-            params.change_attr.call v
-            #params.set_validation.call true
+          m = v.match(/(.*)(#{params.value})(.*)/i)
+          div(class: selected(i)) do
+            span{m[1]}
+            b{m[2]}
+            span{m[3]}
+          end.on(:click) do |e|
+            params.on_change.call v
             state.options! []
-          end
+          end if m
         end
       end if state.options.length > 1 || state.options[0] != params.value
     end
