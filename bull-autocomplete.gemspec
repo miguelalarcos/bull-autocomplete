@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'bull-autocomplete'
-  s.version     = '0.0.1'
+  s.version     = '0.0.2'
   s.date        = '2016-04-09'
   s.summary     = "Autocomplete feature for Bull"
   s.description = "Autocomplete feature for Bull Framework"
